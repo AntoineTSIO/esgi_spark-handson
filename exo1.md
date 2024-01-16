@@ -10,7 +10,9 @@ Dans un premier temps, nous allons travailler en local sur notre IDE. Nous allon
 2. On donne un nom à notre job Spark : `wordcount`
 
 * Que signifie local[*] ?
+  * Cela signifie que Spark doit fonctionner en mode local, en utilisant autant de threads de travail que de cœurs logiques disponibles.
 * Pourquoi avoir choisi local[*] et non pas simplement local ?
+  * Ce choix est un choix plus polyvalent, surtout pendant le développement, car il s'adapte aux ressources disponibles et permet à Spark de tirer parti des machines multicœurs.
 
 ## Lire et écrire un fichier
 
@@ -38,6 +40,7 @@ poetry run wordcount
 ```
 
 * Quels sont les avantages du format de fichier parquet ?
+  * Ce format de fichier permet contrairement au csv une sauvegarde du type de chaque colonne/valeur
 
 
 [Précédent](exo0.md) <- -> [Suivant](exo2.md)

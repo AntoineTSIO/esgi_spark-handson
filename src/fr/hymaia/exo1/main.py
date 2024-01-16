@@ -3,7 +3,17 @@ from pyspark.sql import SparkSession
 
 
 def main():
-    print("Hello world!")
+    spark = SparkSession.builder.master("local[*]").appName("wordcount").getOrCreate()
+
+    input_path = "src/resources/exo1/data.csv"
+    df = spark.read.csv(input_path, header=True, inferSchema=True)
+
+    result_df = wordcount(df, "text")
+
+    result_df.show()
+
+    output_path = "data/exo1/output"
+    result_df.write.partitionBy("count").parquet(output_path)
 
 
 def wordcount(df, col_name):
