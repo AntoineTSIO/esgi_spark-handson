@@ -72,3 +72,33 @@ class TestMain(unittest.TestCase):
         actual = departement_count(input)
 
         self.assertEqual(actual.collect(), expected.collect())
+
+    def test_add_departement_column_failed(self):
+        # GIVEN
+        input = spark.createDataFrame(
+            [
+                Row(name="Alice", age=25, zip="12345", city="Paris"),
+                Row(name="Michel", age=70, zip="20050", city="Lyon"),
+                Row(name="Gérard", age=55, zip="00000", city="Marseille")
+            ]
+        )
+        expected = spark.createDataFrame(
+            [
+                Row(name="Alice", age=25, zip="12345", city="Paris", departement="12"),
+                Row(name="Michel", age=70, zip="20050", city="Lyon", departement="2A"),
+                Row(name="Gérard", age=55, zip="00000", city="Marseille", departement="00")
+            ]
+        )
+
+        # WHEN
+        try:
+            actual = add_departement_column(input)
+        except Exception as e:
+            error_message = str(e)
+        else:
+            error_message = None
+
+        # THEN
+        self.assertNotEqual(actual.collect(), expected.collect())
+        self.assertIsNotNone(error_message)
+        print("Error message:", error_message)
