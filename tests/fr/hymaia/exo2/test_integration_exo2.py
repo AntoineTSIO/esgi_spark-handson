@@ -1,9 +1,6 @@
 import os
 import subprocess
 import unittest
-from pyspark.sql import SparkSession
-from src.fr.hymaia.exo2.spark_clean_job import clean_job as clean_main
-from src.fr.hymaia.exo2.spark_aggregate_job import aggregate_job as aggregate_main
 
 
 class TestIntegrationJobs(unittest.TestCase):

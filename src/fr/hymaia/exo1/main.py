@@ -10,8 +10,6 @@ def main():
 
     result_df = wordcount(df, "text")
 
-    result_df.show()
-
     output_path = "data/exo1/output"
     result_df.write.partitionBy("count").parquet(output_path)
 
