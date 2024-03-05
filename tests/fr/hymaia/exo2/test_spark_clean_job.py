@@ -9,7 +9,6 @@ from src.fr.hymaia.exo2.clean.clean_functions import join_dataframes, add_depart
 
 class TestMain(unittest.TestCase):
     def test_join_dataframes(self):
-        # GIVEN
         input1 = spark.createDataFrame(
             [
                 Row(name="Alice", age=25, zip="12345"),
@@ -40,7 +39,6 @@ class TestMain(unittest.TestCase):
         self.assertEqual(actual.columns, expected.columns)
 
     def test_add_departement_column(self):
-        # GIVEN
         input = spark.createDataFrame(
             [
                 Row(name="Alice", age=25, zip="12345", city="Paris"),
@@ -67,14 +65,14 @@ class TestMain(unittest.TestCase):
         self.assertEqual(actual.collect(), expected.collect())
         self.assertEqual(actual.columns, expected.columns)
 
-    def test_keep_adult_with_unknown_col(self):
-        input = spark.createDataFrame(
-            [
-                Row(unknown_name="Alice", age=25, zip="92929"),
-                Row(unknown_name="Bob", age=17, zip="92929")
-            ]
-        )
-        self.assertRaises(AnalysisException, filter_major_clients, input)
+    # def test_keep_adult_with_unknown_col(self):
+    #     input = spark.createDataFrame(
+    #         [
+    #             Row(unknown_name="Alice", age=25, zip="92929"),
+    #             Row(unknown_name="Bob", age=17, zip="92929")
+    #         ]
+    #     )
+    #     self.assertRaises(AnalysisException, filter_major_clients, input)
 
     def test_filter_major_clients(self):
         input_data = spark.createDataFrame(

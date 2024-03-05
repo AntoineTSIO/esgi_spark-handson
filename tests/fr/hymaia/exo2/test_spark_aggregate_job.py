@@ -7,7 +7,6 @@ from src.fr.hymaia.exo2.agregate.aggregate_functions import departement_count
 class TestMain(unittest.TestCase):
 
     def test_add_departement_count(self):
-        # GIVEN
         input = spark.createDataFrame(
             [
                 Row(name="Alice", age=25, zip="12345", city="Paris", departement="12"),

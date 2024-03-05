@@ -3,11 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 from pyspark.sql.column import Column, _to_java_column, _to_seq
 
-start_time = time.time()
 
-# Create Spark session
-spark = SparkSession.builder.master("local[*]").appName("scala_udf").config('spark.jars',
-                                                                            'src/resources/exo4/udf.jar').getOrCreate()
 
 
 def addCategoryName(col):
@@ -20,15 +16,13 @@ def addCategoryName(col):
 
 
 def main():
-    # Read CSV
+    spark = (SparkSession.builder
+             .master("local[*]")
+             .appName("scala_udf")
+             .config('spark.jars', 'src/resources/exo4/udf.jar').getOrCreate())
+
     df = spark.read.csv("./src/resources/exo4/sell.csv", header=True)
 
-    # Apply UDF
     df = df.withColumn("category_name", addCategoryName(col("category")))
 
-    start_time = time.time()
     df.write.csv("data/exo4/scala", header=True, mode="overwrite")
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print("Temps écoulé pour écrire le DataFrame:", elapsed_time, "secondes")
-    spark.stop()

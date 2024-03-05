@@ -1,10 +1,8 @@
 import pyspark.sql.functions as f
-from pyspark.sql import SparkSession
+from src.fr.hymaia.spark_session import spark
 
 
 def main():
-    spark = SparkSession.builder.master("local[*]").appName("wordcount").getOrCreate()
-
     input_path = "src/resources/exo1/data.csv"
     df = spark.read.csv(input_path, header=True, inferSchema=True)
 

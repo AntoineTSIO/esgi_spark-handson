@@ -1,53 +1,45 @@
 import unittest
-import pytest
-from pyspark.sql import SparkSession
+
+from pyspark import Row
+
+from tests.fr.hymaia.spark_test_case import spark
 from src.fr.hymaia.exo2.spark_aggregate_job import aggregate_job
 from src.fr.hymaia.exo2.spark_clean_job import clean_job
 
 
 class TestIntegrationJobs(unittest.TestCase):
 
-    # def test_integration_exo2(self):
-    #     job1script_path = "src/fr/hymaia/exo2/spark_clean_job.py"
-    #
-    #     subprocess.run(["spark-submit", job1script_path])
-    #     output_path = "data/exo2/output.parquet"
-    #     assert os.path.exists(output_path), "Le fichier parquet de sortie du job 1 n'a pas été créé."
-    #
-    #     job2_script_path = "src/fr/hymaia/exo2/spark_aggregate_job.py"
-    #
-    #     subprocess.run(["spark-submit", job2_script_path])
-    #     output_csv_path = "data/exo2/aggregate.csv"
-    #     assert os.path.exists(output_csv_path), "Le fichier CSV de sortie du job 2 n'a pas été créé."
+    def test_integration(self):
+        city_zipcode_path = "tests/resources/exo2_integration_test/city_zipcode.csv"
+        clients_bdd_path = "tests/resources/exo2_integration_test/clients_bdd.csv"
+        output_path = "tests/resources/exo2_integration_test/output.csv"
+        output_data_path = "tests/resources/exo2_integration_test/final_output.csv"
 
-    # def test_integration(self, input_data_path, output_data_path):
-    #     """Test the integration of clean and aggregate jobs."""
-    #     city_zipcode_path, clients_bdd_path, output_path = input_data_path
-    #     # Generate some sample data
-    #     sample_city_zipcode_data = [
-    #         (1, "Paris", 75000),
-    #         (2, "Marseille", 13000),
-    #     ]
-    #     sample_clients_bdd_data = [
-    #         (101, "John Doe", 1),
-    #         (102, "Jane Doe", 2),
-    #     ]
-    #     # Write sample data to CSV files
-    #     self.createDataFrame(sample_city_zipcode_data, ["id", "city", "zipcode"]).write.csv(
-    #         city_zipcode_path, mode="overwrite", header=True)
-    #     self.createDataFrame(sample_clients_bdd_data, ["client_id", "client_name", "zipcode"]).write.csv(
-    #         clients_bdd_path, mode="overwrite", header=True)
-    #
-    #     # Execute clean job
-    #     clean_job(self, city_zipcode_path, clients_bdd_path, output_path)
-    #
-    #     # Execute aggregate job
-    #     aggregate_job(self, output_path, output_data_path)
-    #
-    #     # Read and assert the result
-    #     result_df = self.read.csv(output_data_path, header=True, inferSchema=True)
-    #     assert result_df.collect() == [
-    #         ("Paris", 1),
-    #         ("Marseille", 1),
-    #     ]
-    pass
+        sample_city_zipcode_data = [
+            (75000, "Paris"),
+            (13000, "Marseille"),
+        ]
+        sample_clients_bdd_data = [
+            ("John", 42, 75000),
+            ("Jack", 16, 75000),
+            ("Jane", 28, 13000),
+        ]
+        spark.createDataFrame(sample_city_zipcode_data, ["zip", "city"]).write.csv(
+            city_zipcode_path, mode="overwrite", header=True)
+        spark.createDataFrame(sample_clients_bdd_data, ["name", "age", "zip"]).write.csv(
+            clients_bdd_path, mode="overwrite", header=True)
+
+        clean_job(spark, city_zipcode_path, clients_bdd_path, output_path)
+
+        aggregate_job(spark, output_path, output_data_path)
+
+        result_df = spark.read.csv(output_data_path, header=True, inferSchema=True)
+
+        expected_df = spark.createDataFrame(
+            [
+                Row(departement=13, nb_people=1),
+                Row(departement=75, nb_people=1),
+            ]
+        )
+        self.assertEqual(result_df.collect(), expected_df.collect())
+        self.assertEqual(result_df.columns, expected_df.columns)
