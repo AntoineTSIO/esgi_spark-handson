@@ -32,10 +32,11 @@ def add_departement_column(df):
 
 
 def join_dataframes(clients_df, villes_df):
-    result_df = clients_df.join(villes_df, clients_df["zip"] == villes_df["zip"]).select(
-        clients_df["name"],
-        clients_df["age"],
-        villes_df["zip"],
-        villes_df["city"]
-    )
+    result_df = clients_df.join(villes_df, "zip")
+    result_df = result_df.select("name", "age", "zip", "city")
     return result_df
+
+
+def filter_major_clients(df):
+    filtered_df = df.filter(df["age"] >= 18)
+    return filtered_df

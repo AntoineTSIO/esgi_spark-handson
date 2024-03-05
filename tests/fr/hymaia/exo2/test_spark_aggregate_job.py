@@ -25,3 +25,5 @@ class TestMain(unittest.TestCase):
         actual = departement_count(input)
 
         self.assertEqual(actual.collect(), expected.collect())
+        self.assertEqual(actual.columns, expected.columns)
+
